@@ -1,0 +1,16 @@
+services:
+  brightspace-mock:
+    build: .
+    container_name: brightspace-mock
+    restart: unless-stopped
+    ports:
+      - "8800:8800"
+    environment:
+      # Cambia estas dos URL por la dirección con la que EduTrace llegará al mock.
+      AUTH_BASE_URL: "http://localhost:8800"
+      API_BASE_URL: "http://localhost:8800"
+      MOCK_DEMO_PASSWORD: "Mock2026!"
+      COOKIE_SECURE: "false"   # "true" cuando esté detrás de HTTPS
+    volumes:
+      - ./data:/data
+    mem_limit: 256m
