@@ -20,7 +20,24 @@ términos desconocidos, en [`10-GLOSARIO.md`](10-GLOSARIO.md).
 
 ---
 
+## Índice
+
+| Numero                                        | Sección                                |
+|-----------------------------------------------|----------------------------------------|
+| [§1](#1-cómo-funciona-el-mock-visión-general) | Cómo funciona el mock (visión general) |
+| [§2](#2-flujos-de-uso)                        | Flujos de uso                          |
+| [§3](#3-hosts)                                | Hosts                                  |
+| [§4](#4-oauth-20)                             | OAuth 2.0                              |
+| [§5](#5-llamadas-a-la-api)                    | Llamadas a la API                      |
+| [§6](#6-rutas-implementadas)                  | Rutas Implementadas                    |
+| [§7](#7-permisos-por-rol-aprox)               | Permisos por Rol                       |
+| [§8](#8-comportamientos-de-dominio-aprox)     | Comportamientos de Dominio [APROX]     |
+| [§9](#9-fuera-del-alcance)                    | Fuera del Alcance                      |
+
+---
+
 ## 1. Cómo funciona el mock (visión general)
+[§Index](#índice) Volver al Indice
 
 ### 1.1 Un proceso, dos papeles
 
@@ -35,7 +52,7 @@ Brightspace real son dos sistemas distintos:
 Por eso hay dos variables de configuración, `AUTH_BASE_URL` y `API_BASE_URL`, aunque apunten al mismo
 proceso.
 
-> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURA.md) §1.
+> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURE.md) §1.
 
 ### 1.2 De qué está hecho
 
@@ -51,31 +68,14 @@ El código se organiza en tres bloques: `app/oauth/` (el servidor de autorizaci�
 `app/security/` (contraseñas, claves, tokens, scopes, límite de tasa) y `app/api/` (un archivo por
 grupo de rutas de D2L: usuarios, inscripciones, carpetas de entrega, notas). Consume unos 60 MB de RAM.
 
-> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURA.md) §2-3.
+> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURE.md) §2-3.
 
 ### 1.3 El viaje de una petición
 
 Cuando EduTrace llama a, por ejemplo, `GET /d2l/api/le/1.82/6650/dropbox/folders/` con un token, la
 petición pasa por estas etapas, **en este orden**:
 
-```mermaid
-flowchart TD
-    A[Petición llega] --> B[Middleware: lee el token del encabezado y lo verifica]
-    B --> C[Middleware: gasta 1 crédito del límite de tasa]
-    C -->|sin créditos| X1[429 + Retry-After]
-    C --> D[Router: ¿existe la ruta? ¿los IDs son enteros?]
-    D -->|no| X2[404]
-    D --> E[¿La versión está soportada?]
-    E -->|no| X2
-    E --> F[¿Hay un token válido de un usuario activo?]
-    F -->|no| X3[403 Invalid Token]
-    F --> G[¿El token tiene el scope que exige la ruta?]
-    G -->|no| X4[403 Insufficient scope]
-    G --> H[¿El curso existe y el usuario tiene rol suficiente?]
-    H -->|no| X5[404 o 403]
-    H --> I[La ruta consulta SQLite y arma el JSON de D2L]
-    I --> J[200 + encabezados X-Rate-Limit-*]
-```
+![Viaje Peticion](Images/Viaje%20Peticion.png)
 
 Cosas que explican errores que verás:
 
@@ -88,7 +88,7 @@ Cosas que explican errores que verás:
 - **Una transacción por petición:** si algo falla a mitad de camino, nada de lo que alcanzó a
   escribirse queda guardado.
 
-> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURA.md) §5 (el viaje de una petición y el orden de
+> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURE.md) §5 (el viaje de una petición y el orden de
 > los chequeos).
 
 ### 1.4 Qué decide si una llamada pasa
@@ -121,7 +121,7 @@ hacerla el usuario. Se necesitan ambos. Para no revelar que algo existe, algunas
   dos cursos, carpetas de entrega y una entrega de ejemplo).
 
 > **Fuente:** [`06-MODELO-DE-DATOS.md`](06-MODELO-DE-DATOS.md) §1, §3, §5-7;
-> [`01-ARQUITECTURA.md`](01-ARQUITECTURA.md) §6.
+> [`01-ARQUITECTURA.md`](01-ARQUITECTURE.md) §6.
 
 ### 1.6 Principio de diseño: ser más estricto que Brightspace
 
@@ -131,12 +131,13 @@ funciona aquí no se rompa allá. Ejemplos: la barra final de las rutas es oblig
 pedir autorización, y `core:*:*` no abre ninguna ruta por defecto.
 
 > **Fuente:** [`00-INDICE.md`](00-INDICE.md) ("La idea en un párrafo");
-> [`01-ARQUITECTURA.md`](01-ARQUITECTURA.md) §7 (decisiones de diseño);
+> [`01-ARQUITECTURA.md`](01-ARQUITECTURE.md) §7 (decisiones de diseño);
 > [`04-TOKENS-SCOPES-PERMISOS.md`](04-TOKENS-SCOPES-PERMISOS.md) §2 (el caso `core:*:*`).
 
 ---
 
 ## 2. Flujos de uso
+[§Index](#índice) Volver al Indice
 
 Cada flujo describe: **quién** lo hace, **qué necesita** (scope y rol), **los pasos** con las
 peticiones, **qué responde** el mock y **qué errores** pueden salir. Los valores de los ejemplos (IDs,
@@ -162,6 +163,7 @@ aparece aquí.
 | [2.12](#212-errores-límite-de-tasa-y-paginación-en-cualquier-flujo) | Cómo reaccionar a 403, 404, 429 y listas largas | EduTrace (backend) |
 
 ### 2.0 Preparación: registrar la aplicación
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** el administrador (en Brightspace real, desde *Manage Extensibility > OAuth 2.0*; en el mock,
 con `admin.py`).
@@ -193,6 +195,7 @@ fuera de 1800–72000 se rechazan al registrar.
 > [`08-OPERACION-Y-PRUEBAS.md`](08-OPERACION-Y-PRUEBAS.md) §3 (tabla de `admin.py`).
 
 ### 2.1 Descubrir las versiones de la API
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** cualquiera. **Necesita:** nada (rutas anónimas [DOC]).
 
@@ -220,32 +223,11 @@ Las versiones que anuncia el mock son [APROX] y se configuran con `LP_VERSIONS` 
 > [`04-TOKENS-SCOPES-PERMISOS.md`](04-TOKENS-SCOPES-PERMISOS.md) §4.
 
 ### 2.2 Iniciar sesión de un usuario (Authorization Code)
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** un docente o estudiante, a través de EduTrace. **Necesita:** la app registrada en 2.0.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as Usuario + navegador
-    participant E as EduTrace (backend)
-    participant A as Mock: autorización
-    participant API as Mock: API
-
-    U->>E: "Entrar con Brightspace"
-    E->>E: genera un state aleatorio y lo guarda en el servidor
-    E-->>U: redirige a /oauth2/auth?response_type=code&client_id&redirect_uri&scope&state
-    U->>A: GET /oauth2/auth?...
-    A-->>U: página de login (y de consentimiento la primera vez)
-    U->>A: usuario y contraseña; "Permitir"
-    A-->>U: redirige a redirect_uri?code=...&state=...
-    U->>E: GET /callback?code&state
-    E->>E: compara el state (si no coincide, rechaza)
-    E->>A: POST /core/connect/token (código + secreto)
-    A-->>E: access_token, refresh_token, expires_in, scope
-    E->>API: GET /d2l/api/lp/1.49/users/whoami (Bearer)
-    API-->>E: quién es el usuario
-    E-->>U: sesión de EduTrace iniciada
-```
+![Usr Login](Images/Usr%20Login.png)
 
 **Paso 1 — Redirigir al usuario** (lo hace EduTrace):
 
@@ -309,6 +291,7 @@ quién inició sesión. `Identifier` viene como texto aunque represente un núme
 > paso y sus validaciones) y §6 (errores); [`05-REFERENCIA-API.md`](05-REFERENCIA-API.md) §2 (`whoami`).
 
 ### 2.3 Mantener la sesión (refresh token)
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** el backend de EduTrace, cuando el access token vence (o al recibir `403 Invalid Token`).
 
@@ -333,6 +316,7 @@ El refresh token vive 30 días por defecto [APROX].
 > **Fuente:** [`02-OAUTH-AUTHORIZATION-CODE.md`](02-OAUTH-AUTHORIZATION-CODE.md) §5.
 
 ### 2.4 Trabajar sin usuario (Client Credentials)
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** una tarea de fondo de EduTrace (por ejemplo, sincronizar las listas de clase de todos los
 cursos). **Necesita:** la app `register-s2s` de 2.0 y una clave pública publicada.
@@ -381,6 +365,7 @@ con otra clave. Un scope no registrado da `400 invalid_scope`.
 > **Fuente:** [`03-OAUTH-CLIENT-CREDENTIALS.md`](03-OAUTH-CLIENT-CREDENTIALS.md) §3-8.
 
 ### 2.5 Descubrir cursos, roles y lista de clase
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** cualquier usuario con sesión. **Necesita:** `enrollment:own_enrollment:read` (y
 `enrollment:orgunit:read` para la lista de clase).
@@ -416,6 +401,7 @@ mismo; el resto, `403 Not authorized to view this user`.
 > [`04-TOKENS-SCOPES-PERMISOS.md`](04-TOKENS-SCOPES-PERMISOS.md) §3 (roles y qué ve cada uno).
 
 ### 2.6 Crear y consultar carpetas de entrega
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** el docente del curso (o staff). Los estudiantes y docentes solo pueden **leer**.
 
@@ -466,6 +452,7 @@ entregar (403).
 > disponibilidad"); [`06-MODELO-DE-DATOS.md`](06-MODELO-DE-DATOS.md) §8 (`RichText` vs `RichTextInput`).
 
 ### 2.7 Entregar una tarea
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** un **estudiante** inscrito en el curso (ni docentes ni el usuario de servicio).
 **Necesita:** scope `dropbox:folders:write`.
@@ -517,6 +504,7 @@ segunda entrega (403); `OverwriteSubmissions` borra las anteriores del estudiant
 > [`05-REFERENCIA-API.md`](05-REFERENCIA-API.md) §5.
 
 ### 2.8 Revisar entregas y descargar archivos
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** docente (o staff). **Necesita:** `dropbox:folders:read`.
 
@@ -538,21 +526,13 @@ GET /d2l/api/le/1.82/6650/dropbox/folders/701/submissions/1/files/1   (descargar
 > [`05-REFERENCIA-API.md`](05-REFERENCIA-API.md) §5.
 
 ### 2.9 Retroalimentar: borrador, publicación y nota
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** docente (o staff). **Necesita:** `dropbox:folders:write`. Es el flujo que mejor encaja con la
 idea de EduTrace de que el docente revise antes de que algo llegue al estudiante: **primero borrador,
 después publicación**.
 
-```mermaid
-flowchart LR
-    A[Docente crea carpeta<br/>POST folders/] --> B[Estudiante entrega<br/>POST mysubmissions/]
-    B --> C[Docente lista entregas<br/>GET submissions/]
-    C --> D[Docente descarga archivo<br/>GET files/id]
-    D --> E[Guarda borrador<br/>POST feedback IsGraded=false]
-    E --> F[Publica<br/>POST feedback IsGraded=true]
-    F --> G[La nota pasa al libro]
-    G --> H[Estudiante ve retro y nota]
-```
+![Diagrama de Flujo](Images/7%20Diagrama%20Flujo.png)
 
 **Paso 1 — Guardar un borrador:**
 
@@ -595,6 +575,7 @@ propio estudiante: solo si está publicada).
 > [`05-REFERENCIA-API.md`](05-REFERENCIA-API.md) §6.
 
 ### 2.10 Poner y consultar notas directamente
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** docente (para escribir y ver las de todos) y estudiante (solo las suyas).
 
@@ -625,6 +606,7 @@ requiere carpeta.
 > [`07-ENTREGAS-RETRO-NOTAS.md`](07-ENTREGAS-RETRO-NOTAS.md) §6.
 
 ### 2.11 Lo que ve el estudiante
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Quién:** el estudiante inscrito.
 
@@ -642,6 +624,7 @@ Para conocer el ID de una entrega recién hecha: `mysubmissions` y tomar la últ
 > [`05-REFERENCIA-API.md`](05-REFERENCIA-API.md) §5-7.
 
 ### 2.12 Errores, límite de tasa y paginación en cualquier flujo
+[Mapa Flujos](#mapa-de-los-flujos) Mapa de Flujos
 
 **Cómo leer un 403.** Brightspace no usa 401 para tokens inválidos:
 
@@ -678,6 +661,7 @@ segundos, sin reintentar en bucle inmediato.
 ---
 
 ## 3. Hosts
+[§Index](#índice) Volver al Indice
 
 | En Brightspace real | En el mock |
 |---|---|
@@ -686,9 +670,10 @@ segundos, sin reintentar en bucle inmediato.
 
 El cliente de EduTrace debe tener **dos URL configurables** (autorización y API), igual que en real.
 
-> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURA.md) §1.
+> **Fuente:** [`01-ARQUITECTURA.md`](01-ARQUITECTURE.md) §1.
 
 ## 4. OAuth 2.0
+[§Index](#índice) Volver al Indice
 
 ### 4.1 Endpoints [DOC]
 - Autorización: `GET /oauth2/auth`
@@ -741,6 +726,7 @@ El cliente de EduTrace debe tener **dos URL configurables** (autorización y API
 > **Detalle:** [`04-TOKENS-SCOPES-PERMISOS.md`](04-TOKENS-SCOPES-PERMISOS.md) §1.
 
 ## 5. Llamadas a la API
+[§Index](#índice) Volver al Indice
 
 | Aspecto | Comportamiento | Origen |
 |---|---|---|
@@ -776,6 +762,7 @@ costos: el mock usa 1 crédito por llamada y una cubeta configurable (`RATE_LIMI
 > §4 y §8 (fechas y `RichText`). Flujo de uso: 2.12.
 
 ## 6. Rutas implementadas
+[§Index](#índice) Volver al Indice
 
 Versiones anunciadas por el mock **[APROX: D2L no publica la última versión; configurable]**:
 `lp`: 1.46–1.49, `le`: 1.79–1.82.
@@ -822,6 +809,7 @@ Versiones anunciadas por el mock **[APROX: D2L no publica la última versión; c
 > Flujos de uso: 2.5 a 2.11.
 
 ## 7. Permisos por rol [APROX]
+[§Index](#índice) Volver al Indice
 
 En Brightspace los permisos los configura cada institución por rol. El mock usa una
 configuración típica:
@@ -842,6 +830,8 @@ Fuera del curso: 403.
 > `STAFF`, `MEMBERS` y `STUDENT`, y cuándo se responde 404 en lugar de 403).
 
 ## 8. Comportamientos de dominio [APROX]
+[§Index](#índice) Volver al Indice
+
 - Publicar retroalimentación con `IsGraded: true` y `Score` en una carpeta enlazada a un ítem de
   calificación (`GradeItemId`) **copia la nota al libro de calificaciones**. Así funciona la
   interfaz de Brightspace; el detalle exacto por API no está documentado.
@@ -851,6 +841,8 @@ Fuera del curso: 403.
 > **Detalle:** [`07-ENTREGAS-RETRO-NOTAS.md`](07-ENTREGAS-RETRO-NOTAS.md) §4-5. Flujo de uso: 2.9 y 2.11.
 
 ## 9. Fuera del alcance
+[§Index](#índice) Volver al Indice
+
 LTI 1.3, carga resumible, archivos adjuntos en retroalimentación, rúbricas, grupos, quizzes,
 contenido, analíticas, logs, revocación de tokens, autenticación legacy ID-Key.
 

@@ -54,32 +54,7 @@ mock se hace con `admin.py register-app`, que llama a `register_authorization_co
 
 ## 3. El flujo completo
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as Usuario + navegador
-    participant E as EduTrace (backend)
-    participant A as Mock: autorización
-    participant API as Mock: API
-
-    U->>E: "Entrar con Brightspace"
-    E->>E: genera state aleatorio y lo guarda en la sesión del usuario en EduTrace
-    E-->>U: 302 → /oauth2/auth?response_type=code&client_id&redirect_uri&scope&state
-    U->>A: GET /oauth2/auth?...
-    A->>A: valida client_id, redirect_uri, response_type, scope
-    A-->>U: página de login (si no hay sesión del mock)
-    U->>A: POST /oauth2/auth/login (usuario, contraseña, csrf)
-    A-->>U: página de consentimiento (si la app la exige y aún no se dio)
-    U->>A: POST /oauth2/auth/consent (allow)
-    A-->>U: 302 → redirect_uri?code=...&state=...
-    U->>E: GET /callback?code&state
-    E->>E: compara state con el guardado (si no coincide: rechazar)
-    E->>A: POST /core/connect/token (Basic client_id:secret; grant_type=authorization_code, code, redirect_uri)
-    A-->>E: { access_token, token_type, expires_in, scope, refresh_token }
-    E->>API: GET /d2l/api/lp/1.49/users/whoami (Authorization: Bearer ...)
-    API-->>E: { Identifier, FirstName, UniqueName, ... }
-    E-->>U: sesión de EduTrace iniciada
-```
+![Diagrama de secuencia](Images/2%20OAuth%20Auth.png)
 
 Pasos 1–3, 13 y 16 son **tu código** en EduTrace. El resto lo hace el mock (o Brightspace).
 

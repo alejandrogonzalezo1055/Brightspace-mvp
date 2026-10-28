@@ -11,7 +11,7 @@ lista de clase, carpetas de entrega, entregas, retroalimentación y notas).
   **Fuente** que dice de qué documento sale lo explicado, para que puedas profundizar.
 
 > **Fuente de esta introducción:** [`docs/00-INDICE.md`](docs/00-INDICE.md) ("La idea en un
-> párrafo") y [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURA.md) §1.
+> párrafo") y [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §1.
 
 ## Índice: ¿qué quieres hacer?
 
@@ -31,6 +31,8 @@ lista de clase, carpetas de entrega, entregas, retroalimentación y notas).
 ---
 
 ## 0. Conceptos mínimos (si no conoces Brightspace)
+
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 ### 0.1 Qué es Brightspace
 
@@ -68,7 +70,7 @@ Lo que **no** es: una copia del interior de Brightspace, un LMS con interfaz web
 para datos reales (las contraseñas de demostración son públicas y, por defecto, corre sin HTTPS).
 
 > **Fuente:** [`docs/00-INDICE.md`](docs/00-INDICE.md) ("La idea en un párrafo") y
-> [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURA.md) §1 ("Qué es el mock y qué no es").
+> [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §1 ("Qué es el mock y qué no es").
 
 ### 0.3 Dos servidores en uno
 
@@ -84,7 +86,7 @@ Por eso hay **dos variables de configuración** (`AUTH_BASE_URL` y `API_BASE_URL
 mismo mock. EduTrace también debe tenerlas separadas: el día que se conecte al Brightspace real,
 solo cambian esas dos URL.
 
-> **Fuente:** [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURA.md) §1;
+> **Fuente:** [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §1;
 > [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md) §1 (hosts).
 
 ### 0.4 Cómo se entra a la API: OAuth 2.0, tokens y scopes
@@ -135,6 +137,7 @@ Verás estas marcas en toda la documentación. Dicen **cuánto puedes confiar** 
 ---
 
 ## 1. Estructura del proyecto
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 ```
 mock-brightspace/
@@ -181,7 +184,7 @@ Qué hay en `data/` y qué pasa si la borras:
 | `data/uploads/<idEntrega>/<idArchivo>` | Los archivos entregados | Las descargas de esos archivos fallan |
 
 La carpeta `docs/` se lee en este orden: [00-INDICE](docs/00-INDICE.md) →
-[01-ARQUITECTURA](docs/01-ARQUITECTURA.md) → [02-OAUTH-AUTHORIZATION-CODE](docs/02-OAUTH-AUTHORIZATION-CODE.md) →
+[01-ARQUITECTURA](docs/01-ARQUITECTURE.md) → [02-OAUTH-AUTHORIZATION-CODE](docs/02-OAUTH-AUTHORIZATION-CODE.md) →
 [03-OAUTH-CLIENT-CREDENTIALS](docs/03-OAUTH-CLIENT-CREDENTIALS.md) →
 [04-TOKENS-SCOPES-PERMISOS](docs/04-TOKENS-SCOPES-PERMISOS.md) → [05-REFERENCIA-API](docs/05-REFERENCIA-API.md) →
 [06-MODELO-DE-DATOS](docs/06-MODELO-DE-DATOS.md) → [07-ENTREGAS-RETRO-NOTAS](docs/07-ENTREGAS-RETRO-NOTAS.md) →
@@ -190,12 +193,13 @@ La carpeta `docs/` se lee en este orden: [00-INDICE](docs/00-INDICE.md) →
 [`docs/ESPECIFICACION.md`](docs/ESPECIFICACION.md) resume qué copia y qué aproxima, y explica los
 flujos de uso.
 
-> **Fuente:** [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURA.md) §3 (mapa de archivos) y §6 (carpeta
+> **Fuente:** [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §3 (mapa de archivos) y §6 (carpeta
 > `data/`); [`docs/00-INDICE.md`](docs/00-INDICE.md) ("Cómo leerla").
 
 ---
 
 ## 2. Correrlo en tu computador
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 Necesitas Python 3.10 o superior.
 
@@ -239,13 +243,14 @@ nuevo. `reset` borra **todo** (apps registradas, entregas y la clave de firma), 
 que volver a [registrar las apps](#4-registrar-edutrace-como-aplicación).
 
 > **Fuente:** [`docs/08-OPERACION-Y-PRUEBAS.md`](docs/08-OPERACION-Y-PRUEBAS.md) §2 (correrlo), §3
-> (`reset`) y §4 (las pruebas); [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURA.md) §4 (`create_app` y
+> (`reset`) y §4 (las pruebas); [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §4 (`create_app` y
 > `--factory`) y §6 (carpeta `data/`); [`docs/05-REFERENCIA-API.md`](docs/05-REFERENCIA-API.md) §1 y §9
 > (rutas de versiones y rutas solo del mock).
 
 ---
 
 ## 3. Correrlo en tu servidor
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 Pensado para un Ubuntu Server con un i3 y 4 GB de RAM. El mock consume unos 60 MB, así que cabe de
 sobra junto a CasaOS y Crafty: no hace falta apagarlos. Lo que sí conviene es **no tener un servidor
@@ -331,7 +336,7 @@ journalctl -u brightspace-mock -f      # ver los logs
 
 > **Fuente:** [`docs/08-OPERACION-Y-PRUEBAS.md`](docs/08-OPERACION-Y-PRUEBAS.md) §1 (variables
 > `DATA_DIR`, `AUTH_BASE_URL`, `API_BASE_URL`) y §2 (systemd como alternativa a Docker para segundo
-> plano); [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURA.md) §4 (`--factory`).
+> plano); [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §4 (`--factory`).
 
 ### 3.3 Cambiar las URL cuando no es `localhost`
 
@@ -390,6 +395,7 @@ tokens anteriores dejan de servir (la clave de firma es nueva).
 ---
 
 ## 4. Datos de demostración
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 La primera vez que arranca (o después de `admin.py reset`) el mock carga datos de prueba. **Todas las
 contraseñas son `Mock2026!`** (o la que pongas en `MOCK_DEMO_PASSWORD` antes de crear los datos).
@@ -444,12 +450,13 @@ contraseñas son `Mock2026!`** (o la que pongas en `MOCK_DEMO_PASSWORD` antes de
 
 > **Fuente:** [`docs/06-MODELO-DE-DATOS.md`](docs/06-MODELO-DE-DATOS.md) §7 (todas las tablas de datos
 > de demo, el "por qué" y el aviso de fechas relativas); [`docs/08-OPERACION-Y-PRUEBAS.md`](docs/08-OPERACION-Y-PRUEBAS.md)
-> §3 (`users`) y §6 (error 403 "at this time"); [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURA.md) §7
+> §3 (`users`) y §6 (error 403 "at this time"); [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §7
 > (por qué los IDs son inventados).
 
 ---
 
 ## 5. Registrar EduTrace como aplicación
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 Antes de que EduTrace pueda pedir tokens, Brightspace tiene que **conocerlo**. En Brightspace real lo
 hace un administrador desde *Manage Extensibility > OAuth 2.0*. En el mock se usa `admin.py`
@@ -528,6 +535,7 @@ El comando imprime el `aud` exacto que debe llevar la aserción. El token result
 ---
 
 ## 6. Qué tiene que hacer el cliente de EduTrace (sin código)
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 Esta es la lista de piezas que debe construir el backend de EduTrace para hablar con Brightspace
 (o con el mock). El paso a paso con peticiones concretas está en
@@ -578,6 +586,7 @@ siempre `localhost` porque es una dirección a la que va **tu navegador**, no el
 ---
 
 ## 7. Variables de entorno
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 Se configuran al arrancar (en `docker-compose.yml`, en la unidad de systemd o en la terminal).
 
@@ -606,6 +615,7 @@ Fijos en el código: la vida del código de autorización (300 s) y de la sesió
 ---
 
 ## 8. Si algo falla
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 | Síntoma | Causa probable | Qué hacer |
 |---|---|---|
@@ -632,6 +642,7 @@ Fijos en el código: la vida del código de autorización (300 s) y de la sesió
 ---
 
 ## 9. Qué tan fiel es al Brightspace real
+[§Index](#índice-qué-quieres-hacer) Volver al Indice
 
 El mock solo es útil si sabes en qué puedes confiar. Resumen:
 

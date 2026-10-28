@@ -101,41 +101,7 @@ temporal, sin tocar `data/`.
 
 Ejemplo: `GET /d2l/api/le/1.82/6650/dropbox/folders/` con `Authorization: Bearer eyJ...`
 
-```mermaid
-sequenceDiagram
-    participant C as Cliente (EduTrace)
-    participant M as Middleware (main.py)
-    participant R as Router FastAPI
-    participant D as Dependencias (deps.py)
-    participant H as Ruta (dropbox.py)
-    participant F as formats.py
-    participant DB as SQLite
-
-    C->>M: GET /d2l/api/le/1.82/6650/dropbox/folders/
-    M->>M: ¿Empieza por /d2l/api/? sí
-    M->>M: Saca el Bearer de Authorization (o Authentication)
-    M->>M: Verifica el JWT → claims o None (request.state.token_claims)
-    M->>M: Gasta 1 crédito del limitador (cubeta de la app o de la IP)
-    alt sin créditos
-        M-->>C: 429 Too Many Requests + Retry-After
-    end
-    M->>R: sigue
-    R->>R: ¿Existe una ruta con ese método y esa forma? (orgUnitId debe ser entero)
-    R->>D: check_version("le"): ¿1.82 está soportada?
-    R->>D: get_conn: abre conexión + transacción
-    R->>D: current_caller: claims → usuario activo en la base (si no: 403 Invalid Token)
-    R->>D: require_scope("dropbox:folders:read") (si no: 403)
-    R->>H: list_folders(org_unit_id=6650, conn, caller)
-    H->>D: require_course_role(...) → ¿curso existe? (404) ¿qué rol tiene? (403)
-    H->>DB: SELECT carpetas del curso
-    H->>F: dropbox_folder(fila, conteos)
-    F-->>H: dict con los campos de D2L
-    H-->>R: lista de dicts
-    R->>D: commit y cierra conexión
-    R-->>M: 200 + JSON
-    M->>M: Agrega X-Rate-Limit-Remaining, X-Request-Cost, X-Rate-Limit-Reset
-    M-->>C: respuesta
-```
+![Diagrama de Secuencia](Images/1%20Architecture.png)
 
 Puntos importantes de este recorrido:
 

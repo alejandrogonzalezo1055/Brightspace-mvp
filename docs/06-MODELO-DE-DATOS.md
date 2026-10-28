@@ -18,29 +18,7 @@ entidades y DTOs.
 
 ## 2. Diagrama entidad-relación
 
-```mermaid
-erDiagram
-    org_unit_types ||--o{ org_units : "tipo"
-    roles ||--o{ users : "rol de organización"
-    roles ||--o{ enrollments : "rol en el curso"
-    users ||--o{ enrollments : ""
-    org_units ||--o{ enrollments : ""
-    users ||--o{ oauth_clients : "usuario de servicio"
-    oauth_clients ||--o{ oauth_codes : ""
-    oauth_clients ||--o{ oauth_refresh_tokens : ""
-    oauth_clients ||--o{ oauth_consents : ""
-    users ||--o{ oauth_consents : ""
-    users ||--o{ login_sessions : ""
-    org_units ||--o{ grade_objects : ""
-    org_units ||--o{ dropbox_folders : ""
-    grade_objects |o--o{ dropbox_folders : "GradeItemId"
-    dropbox_folders ||--o{ submissions : ""
-    users ||--o{ submissions : ""
-    submissions ||--o{ submission_files : ""
-    dropbox_folders ||--o{ dropbox_feedback : ""
-    grade_objects ||--o{ grade_values : ""
-    users ||--o{ grade_values : ""
-```
+![Diagrama Entidad Relacion](Images/6%20EntityRelation.png)
 
 ## 3. Las tablas
 

@@ -7,16 +7,7 @@ borde. Archivos: `app/api/dropbox.py`, `app/api/grades.py`, `app/api/common.py`.
 
 ## 1. El ciclo completo
 
-```mermaid
-flowchart LR
-    A[Docente crea carpeta<br/>POST folders/] --> B[Estudiante entrega<br/>POST mysubmissions/]
-    B --> C[Docente lista entregas<br/>GET submissions/]
-    C --> D[Docente descarga archivo<br/>GET .../files/id]
-    D --> E[Docente guarda borrador<br/>POST feedback IsGraded=false]
-    E --> F[Docente publica<br/>POST feedback IsGraded=true]
-    F --> G[La nota pasa al libro<br/>grade_values]
-    G --> H[Estudiante ve retro y nota<br/>mysubmissions / myGradeValue]
-```
+![Diagrama Flujo](Images/7%20Diagrama%20Flujo.png)
 
 Fíjate en el paso E → F: **borrador primero, publicación después**. Encaja con la idea de EduTrace
 de que el docente revise la retroalimentación antes de que llegue al estudiante.

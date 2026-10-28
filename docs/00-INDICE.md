@@ -14,7 +14,7 @@ Si no sabes por dónde empezar, sigue este orden:
 
 | # | Archivo | Qué responde | Léelo si… |
 |---|---|---|---|
-| 1 | [01-ARQUITECTURA.md](01-ARQUITECTURA.md) | Qué piezas tiene el mock, qué hace cada archivo y qué le pasa a una petición desde que llega hasta que sale | Quieres el mapa general antes de entrar en detalle |
+| 1 | [01-ARQUITECTURA.md](01-ARQUITECTURE.md) | Qué piezas tiene el mock, qué hace cada archivo y qué le pasa a una petición desde que llega hasta que sale | Quieres el mapa general antes de entrar en detalle |
 | 2 | [02-OAUTH-AUTHORIZATION-CODE.md](02-OAUTH-AUTHORIZATION-CODE.md) | El login con usuario: paso a paso, qué valida el mock en cada paso, refresh tokens | Vas a programar el login de EduTrace con Brightspace |
 | 3 | [03-OAUTH-CLIENT-CREDENTIALS.md](03-OAUTH-CLIENT-CREDENTIALS.md) | El flujo servidor a servidor con aserción JWT y JWKS | Vas a sincronizar datos sin un usuario conectado |
 | 4 | [04-TOKENS-SCOPES-PERMISOS.md](04-TOKENS-SCOPES-PERMISOS.md) | Cómo es el access token, cómo se verifica, cómo funcionan scopes, roles y el límite de tasa | Te sale un 403 y no sabes por qué |

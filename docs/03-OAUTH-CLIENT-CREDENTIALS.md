@@ -45,24 +45,7 @@ El comando imprime el `aud` exacto que debe llevar la aserción: la URL del endp
 
 ## 3. El flujo
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant E as EduTrace (tarea de fondo)
-    participant J as EduTrace: URL JWKS (pública)
-    participant A as Mock: /core/connect/token
-    participant API as Mock: API
-
-    E->>E: arma un JWT (iss, sub, aud, iat, exp, jti) y lo firma con su clave privada (kid=k1)
-    E->>A: POST /core/connect/token (client_credentials + client_assertion=<JWT> + scope)
-    A->>A: lee el iss SIN verificar, solo para saber qué app es
-    A->>J: GET jwks_url
-    J-->>A: {"keys":[{"kid":"k1", ...clave pública...}]}
-    A->>A: verifica firma, aud, iss, sub, exp-iat ≤ 5 min, jti no repetido
-    A-->>E: { access_token, token_type, expires_in, scope }  (sin refresh_token)
-    E->>API: GET /d2l/api/le/1.82/6650/dropbox/folders/ (Bearer)
-    API-->>E: carpetas (el usuario de servicio ve todos los cursos)
-```
+![Diagrama Secuencia](Images/3%20OAuth%20Client.png)
 
 ## 4. La petición de token
 
