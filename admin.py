@@ -55,10 +55,18 @@ def main() -> int:
     settings = Settings()
 
     if args.command == "reset":
+        # Se vacía el CONTENIDO de la carpeta, no la carpeta: en Docker /data es un punto de
+        # montaje y borrarlo falla con "Device or resource busy".
         if settings.data_dir.exists():
-            shutil.rmtree(settings.data_dir)
+            for child in settings.data_dir.iterdir():
+                if child.is_dir() and not child.is_symlink():
+                    shutil.rmtree(child)
+                else:
+                    child.unlink()
         _prepare(settings)
         print(f"Datos reiniciados en {settings.data_dir}. Contraseña de demo: {seed.demo_password()}")
+        print("Reinicia el servidor (p. ej. 'docker restart brightspace-mock'): conserva en memoria la "
+              "clave de firma y la base anteriores.")
         return 0
 
     _prepare(settings)
@@ -83,6 +91,7 @@ def main() -> int:
                 print(f"- {app['name']} [{app['grant_type']}] client_id={app['client_id']}")
                 print(f"    scopes: {app['scopes']}")
                 print(f"    redirect_uri: {app['redirect_uri']}  jwks_url: {app['jwks_url']}")
+                print(f"    lifetime: {app['token_lifetime']}s")
         elif args.command == "delete-app":
             print("Eliminada." if apps.delete_app(settings, args.client_id) else "No existe esa app.")
         elif args.command == "users":
