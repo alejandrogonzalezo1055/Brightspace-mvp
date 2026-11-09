@@ -227,10 +227,10 @@ Detalles que conviene saber:
   `create_app()`. Sin `--factory`, uvicorn busca una variable `app` que no existe y falla. Las
   pruebas usan esta misma fábrica para crear una app nueva por prueba, sin tocar `data/`.
 - **La terminal debe quedar abierta**: si la cierras, el servidor se detiene. Para dejarlo en segundo
-  plano usa Docker o systemd (ver [§2](#2-correrlo-en-tu-servidor)).
+  plano usa Docker o systemd (ver [§3](#3-correrlo-en-tu-servidor)).
 - Para que **otras máquinas** lo alcancen, agrega `--host 0.0.0.0`.
 - **La primera vez** crea la carpeta `data/` con la base SQLite, la clave con la que firma los tokens
-  y los [datos de demostración](#3-datos-de-demostración). Después reutiliza lo que ya existe.
+  y los [datos de demostración](#4-datos-de-demostración). Después reutiliza lo que ya existe.
 
 Comprueba que funciona:
 
@@ -240,7 +240,7 @@ Comprueba que funciona:
 
 Para volver al estado inicial: detén uvicorn (Ctrl+C), corre `python admin.py reset` y arranca de
 nuevo. `reset` borra **todo** (apps registradas, entregas y la clave de firma), así que después hay
-que volver a [registrar las apps](#4-registrar-edutrace-como-aplicación).
+que volver a [registrar las apps](#5-registrar-edutrace-como-aplicación).
 
 > **Fuente:** [`docs/08-OPERACION-Y-PRUEBAS.md`](docs/08-OPERACION-Y-PRUEBAS.md) §2 (correrlo), §3
 > (`reset`) y §4 (las pruebas); [`docs/01-ARQUITECTURA.md`](docs/01-ARQUITECTURE.md) §4 (`create_app` y
@@ -349,7 +349,7 @@ reiniciando. Si no, pasan tres cosas:
    contra su URL exacta.
 2. **Paginación:** los enlaces `Next` de los listados apuntan a `localhost`.
 3. **Cookie de login:** con `COOKIE_SECURE=true` sin HTTPS el login responde "La sesión del
-   formulario expiró" (ver [§7](#7-si-algo-falla)).
+   formulario expiró" (ver [§8](#8-si-algo-falla)).
 
 Desde tu portátil, usa la IP del servidor en lugar de `localhost`. Si el servidor tiene firewall,
 hay que abrir el puerto 8800 (por ejemplo `sudo ufw allow 8800/tcp`; este consejo es general de
@@ -442,7 +442,7 @@ contraseñas son `Mock2026!`** (o la que pongas en `MOCK_DEMO_PASSWORD` antes de
 > **Las fechas son relativas al momento de cargar los datos.** Las carpetas 701, 702 y 751 **se
 > cierran 21 días después**; pasado ese plazo, entregar responde 403 ("not authorized to submit … at
 > this time"). Los cursos se desactivan a los 60 días. Para renovar las fechas: reiniciar los datos
-> ([§2.5](#25-reiniciar-los-datos-de-forma-segura-en-el-servidor)) o crear carpetas nuevas con
+> ([§3.5](#35-reiniciar-los-datos-de-forma-segura-en-el-servidor)) o crear carpetas nuevas con
 > `POST .../dropbox/folders/`.
 
 > **Los IDs son inventados** (6650, 3101…). **EduTrace no debe tener ningún ID fijo en su código**:

@@ -10,7 +10,8 @@ from app.db import now_str, transaction
 from app.security import scopes as scope_rules
 from app.security.passwords import hash_password
 
-MIN_LIFETIME, MAX_LIFETIME = 1800, 72000  # [DOC] entre 30 minutos y 20 horas
+#CAMBIO EL TIEMPO MINIMO PARA PROBAR SI EL MIDDLEWARE SIRVE
+MIN_LIFETIME, MAX_LIFETIME = 30, 72000  # [DOC] entre 30 minutos y 20 horas
 
 
 class RegistrationError(ValueError):
